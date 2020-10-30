@@ -1,4 +1,4 @@
-function _git_prompt() {
+function _git_prpt() {
   local _out=""
   local N_A="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
   local N_B="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
@@ -10,13 +10,13 @@ function _git_prompt() {
   git diff --cached --quiet 2>/dev/null || _out="${_out}%{$fg_bold[yellow]%}!"
   [ -n $_out ] && echo "%{$fg[magenta]%}[${_out}%{$fg[magenta]%}]"
 }
-function _pwd_prompt() {
+function _pwd_prpt() {
   vcs_info
   [ -n "$vcs_info_msg_0_" ] \
     && echo -n "${vcs_info_msg_0_/\/. / }$(_git_prompt) " \
     || echo -n "%{$fg[cyan]%}%3~ "
 }
-function _vpn_prompt() {
+function _vpn_prpt() {
   ip a | grep -e "inet.*tun\|inet.*tap" \
     | sed "s/.*inet //g;s/\/[0-9]\{1,2\}.*//g" \
     | tr '\n' '-' \
@@ -29,8 +29,9 @@ function _vpn_prompt() {
 autoload -Uz compinit colors vcs_info && compinit -d && colors
 zstyle ":vcs_info:git:*" formats \
   "%{$fg[magenta]%}%r/%S (%{$fg_bold[yellow]%}%b%{$fg[magenta]%})"
+_user="%{$fg[white]%}[%(!.%{$fg[magenta]%}.%{$fg[yellow]%})%{$fg[white]%}]:"
 _isroot="%(!.%{$fg[magenta]%}>.%{$fg[yellow]%}>)"
 _status="%(?.%{$fg[green]%}>>.%{$fg[red]%}>>) "
 
-PROMPT="\$(_pwd_prompt)\$(_vpn_prompt)${_isroot}${_status}%{$reset_color%}"
+PROMPT="${_user}\$(_pwd_prpt)\$(_vpn_prpt)${_isroot}${_status}%{$reset_color%}"
 RPROMPT="%(?..%{$fg[red]%}[%?])%{$reset_color%}"
