@@ -13,7 +13,7 @@ function _git_prpt() {
 function _pwd_prpt() {
   vcs_info
   [ -n "$vcs_info_msg_0_" ] \
-    && echo -n "${vcs_info_msg_0_/\/. / }$(_git_prpt) " \
+    && echo -n "[ ]-${vcs_info_msg_0_/\/. / }$(_git_prpt) " \
     || echo -n "%{$fg[cyan]%}%3~ "
 }
 function _vpn_prpt() {
