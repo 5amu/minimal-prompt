@@ -29,11 +29,13 @@ function _pwd_prompt() {
     || echo -n "%{$fg[cyan]%}%3~ "
 }
 function _vpn_prompt() {
-  ip a | grep -e "inet.*tun\|inet.*tap" \
-    | sed "s/.*inet //g;s/\/[0-9]\{1,2\}.*//g" \
+  ip a \
+    | grep -e "inet.*tun\|inet.*tap" \
+    | awk '{print $2}' \
+    | cut -d '/' -f 1 \
     | tr '\n' '-' \
-    | sed "s/ peer.*-//g;s/-$//g" \
-    | xargs -I '{}' echo "%{$fg[yellow]%}[{}] " || return 0
+    | sed 's/-$//g' \
+    | xargs -I '{}' echo " %{$fg[yellow]%}[{}]" || return 0
 }
 
 autoload -Uz compinit colors vcs_info && compinit -d && colors
@@ -42,5 +44,5 @@ zstyle ":vcs_info:git:*" formats \
 _whoami="%(!.%{$fg[red]%}.%{$fg[yellow]%})%n@%m${_creset} in "
 _status="%(?.%{$fg[green]%}.%{$fg[red]%})%B${_char_symbol}%b "
 
-PROMPT="${_whoami}\$(_pwd_prompt)\$(_vpn_prompt)${_status}${_creset}"
-RPROMPT="%(?..%{$fg[red]%}[%?])${_creset}"
+PROMPT="${_whoami}\$(_pwd_prompt)${_status}${_creset}"
+RPROMPT="%(?..%{$fg[red]%}[%?])\$(_vpn_prompt)${_creset}"
